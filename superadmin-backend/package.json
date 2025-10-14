@@ -1,0 +1,27 @@
+{
+  "name": "06-adding-global-middleware-with-app.use()-method",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "node --watch app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "google-auth-library": "^10.3.1",
+    "mime-types": "^3.0.1",
+    "pg": "^8.11.0",
+    "resend": "^6.1.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.0.0"
+  }
+}
