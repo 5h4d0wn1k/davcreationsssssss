@@ -22,6 +22,7 @@ jobs:
             WORK_DIR="/var/www/dev.davcreations.in/davcreationsssssss"
           
             cd "$WORK_DIR"
+            git config --global --add safe.directory /var/www/dev.davcreations.in/davcreationsssssss
             git pull origin main
           
             # Ensure PM2 is installed
