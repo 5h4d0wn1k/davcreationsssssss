@@ -63,7 +63,7 @@ jobs:
           script: |
             set -e
 
-            WORK_DIR="/var/www/dev.davcreations.in/davcreations-rep"
+            WORK_DIR="/var/www/dev.davcreations.in/davcreationsssssss"
 
             # Ensure PM2 is installed
             if ! command -v pm2 &> /dev/null; then
