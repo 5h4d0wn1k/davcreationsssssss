@@ -34,3 +34,18 @@ coverage/
 
 # Miscellaneous Development Files
 *.pem
+# Node.js specific
+node_modules/
+
+# Environment files
+.env*
+
+# Next.js
+.next/
+
+# Artifacts
+artifacts/
+
+# Additional build artifacts
+build/
+out/
