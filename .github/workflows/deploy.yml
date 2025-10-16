@@ -79,6 +79,20 @@ jobs:
             # Ensure log directory exists
             mkdir -p /var/log/pm2
             
+            # Pull latest code from git
+            if [ -d "$WORK_DIR/.git" ]; then
+              echo "=== Pulling latest code ==="
+              cd "$WORK_DIR"
+              git fetch origin
+              git reset --hard origin/main
+              cd -
+              echo "✓ Code updated"
+            else
+              echo "=== Cloning repository ==="
+              git clone https://github.com/YOUR_USERNAME/davcreationsssssss.git "$WORK_DIR"
+              echo "✓ Repository cloned"
+            fi
+            
             # Deploy each frontend build
             for frontend in customer-frontend admin-frontend superadmin-frontend; do
               echo "=== Deploying $frontend ==="
@@ -86,19 +100,18 @@ jobs:
               # Create frontend subdirectory
               mkdir -p "$WORK_DIR/$frontend"
               
-              # Remove old files except node_modules
-              find "$WORK_DIR/$frontend" -maxdepth 1 -not -name 'node_modules' -delete
-              
-              # Sync built files from artifact dir
-              if [ -d "./artifacts/$frontend-build" ]; then
-                cp -r ./artifacts/$frontend-build/* "$WORK_DIR/$frontend/"
-                echo "✓ Copied $frontend build files"
-              else
-                echo "✗ Artifact directory for $frontend not found!"
-                exit 1
+              # Copy built files from artifact dir (only .next and public)
+              if [ -d "./artifacts/$frontend-build/.next" ]; then
+                cp -r ./artifacts/$frontend-build/.next "$WORK_DIR/$frontend/"
+                echo "✓ Copied .next build"
               fi
               
-              # Install production dependencies
+              if [ -d "./artifacts/$frontend-build/public" ]; then
+                cp -r ./artifacts/$frontend-build/public "$WORK_DIR/$frontend/"
+                echo "✓ Copied public files"
+              fi
+              
+              # Install production dependencies (only if needed)
               cd "$WORK_DIR/$frontend"
               npm ci --only=production --legacy-peer-deps
               echo "✓ Installed dependencies for $frontend"
@@ -109,14 +122,11 @@ jobs:
             cp ./ecosystem.config.js "$WORK_DIR/ecosystem.config.js"
             echo "✓ Copied ecosystem.config.js"
             
-            # Stop existing PM2 processes for these apps
-            pm2 delete customer-frontend admin-frontend superadmin-frontend || true
-            
-            # Start or restart all apps using PM2
+            # Restart all apps using PM2
             cd "$WORK_DIR"
-            pm2 start ecosystem.config.js --name "davcreationsssssss"
+            pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
             pm2 save
-            echo "✓ Started all applications with PM2"
+            echo "✓ Restarted applications with PM2"
             
             # Show PM2 status
             pm2 status
