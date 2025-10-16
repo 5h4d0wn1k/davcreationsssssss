@@ -35,20 +35,22 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setIsMobileOpen(false);
-      }
-    };
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        const mobile = window.innerWidth < 768;
+        setIsMobile(mobile);
+        if (!mobile) {
+          setIsMobileOpen(false);
+        }
+      };
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
+      handleResize();
+      window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
   }, []);
 
   const toggleSidebar = () => {
