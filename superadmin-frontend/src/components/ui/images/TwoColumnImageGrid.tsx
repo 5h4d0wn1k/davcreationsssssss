@@ -11,6 +11,7 @@ export default function TwoColumnImageGrid() {
           className="w-full border border-gray-200 rounded-xl dark:border-gray-800"
           width={517}
           height={295}
+          style={{ aspectRatio: '517 / 295' }}
         />
       </div>
 
@@ -21,6 +22,7 @@ export default function TwoColumnImageGrid() {
           className="w-full border border-gray-200 rounded-xl dark:border-gray-800"
           width={517}
           height={295}
+          style={{ aspectRatio: '517 / 295' }}
         />
       </div>
     </div>

@@ -2,9 +2,19 @@
 import React from "react";
 
 import { ApexOptions } from "apexcharts";
-import ReactApexChart from "react-apexcharts";
 
-export default function BarChartOne() {
+import dynamic from "next/dynamic";
+// Dynamically import the ReactApexChart component
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
+
+interface BarChartOneProps {
+  data?: number[];
+  categories?: string[];
+}
+
+export default function BarChartOne({ data, categories }: BarChartOneProps = {}) {
   const options: ApexOptions = {
     colors: ["#465fff"],
     chart: {
@@ -32,7 +42,7 @@ export default function BarChartOne() {
       colors: ["transparent"],
     },
     xaxis: {
-      categories: [
+      categories: categories || [
         "Jan",
         "Feb",
         "Mar",
@@ -86,8 +96,8 @@ export default function BarChartOne() {
   };
   const series = [
     {
-      name: "Sales",
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      name: "User Registrations",
+      data: data || [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
     },
   ];
   return (

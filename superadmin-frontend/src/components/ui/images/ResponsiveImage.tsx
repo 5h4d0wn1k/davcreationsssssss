@@ -11,6 +11,7 @@ export default function ResponsiveImage() {
           className="w-full border border-gray-200 rounded-xl dark:border-gray-800"
           width={1054}
           height={600}
+          style={{ aspectRatio: '1054 / 600' }}
         />
       </div>
     </div>

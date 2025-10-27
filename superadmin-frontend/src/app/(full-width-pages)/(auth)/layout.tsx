@@ -25,12 +25,13 @@ export default function AuthLayout({
                   <Image
                     width={231}
                     height={48}
-                    src="/images/logo/Banner full square logo.jpg"
+                    src="/images/logo/banner-logo.jpg"
                     alt="Logo"
+                    priority
                   />
                 </Link>
                 <p className="text-center text-gray-400 dark:text-white/60">
-                  Free and Open-Source Tailwind CSS Admin Dashboard Template
+                  davcreations
                 </p>
               </div>
             </div>

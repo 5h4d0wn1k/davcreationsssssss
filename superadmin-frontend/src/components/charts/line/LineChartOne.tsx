@@ -9,7 +9,12 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export default function LineChartOne() {
+interface LineChartOneProps {
+  data?: number[];
+  categories?: string[];
+}
+
+export default function LineChartOne({ data, categories }: LineChartOneProps = {}) {
   const options: ApexOptions = {
     legend: {
       show: false, // Hide legend
@@ -68,7 +73,7 @@ export default function LineChartOne() {
     },
     xaxis: {
       type: "category", // Category-based x-axis
-      categories: [
+      categories: categories || [
         "Jan",
         "Feb",
         "Mar",
@@ -110,12 +115,8 @@ export default function LineChartOne() {
 
   const series = [
     {
-      name: "Sales",
-      data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
-    },
-    {
-      name: "Revenue",
-      data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
+      name: "User Activity",
+      data: data || [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
     },
   ];
   return (

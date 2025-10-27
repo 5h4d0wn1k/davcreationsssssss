@@ -1,17 +1,78 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { useAuth } from "../../contexts/AuthContext";
+import { userService } from "../../services/api/users";
+import { UpdateUserData } from "../../services/types/user";
+import { logger } from "../../services/utils/logger";
 
 export default function UserAddressCard() {
+  const { user, refreshSession } = useAuth();
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    country: "",
+    cityState: "",
+    postalCode: "",
+    taxId: "",
+  });
+
+  // Initialize form data with user data
+  useEffect(() => {
+    if (user) {
+      // Parse address if it contains structured data, otherwise use defaults
+      const addressParts = user.address?.split(', ') || [];
+      setFormData({
+        country: addressParts[2] || "United States",
+        cityState: addressParts[0] && addressParts[1] ? `${addressParts[0]}, ${addressParts[1]}` : "Phoenix, Arizona, United States",
+        postalCode: "ERT 2489", // Default since not in user model
+        taxId: "AS4568384", // Default since not in user model
+      });
+    }
+  }, [user]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      // Construct address string from form data
+      const address = `${formData.cityState}, ${formData.postalCode}, ${formData.country}`;
+
+      const updateData: UpdateUserData = {
+        address: address,
+      };
+
+      await userService.updateUser(user.id, updateData);
+      await refreshSession(); // Refresh user data in context
+
+      setSuccess("Address updated successfully!");
+      setTimeout(() => {
+        setSuccess(null);
+        closeModal();
+      }, 2000);
+
+      logger.info("Address updated successfully");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to update address";
+      setError(errorMessage);
+      logger.error("Failed to update address:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <>
@@ -28,7 +89,7 @@ export default function UserAddressCard() {
                   Country
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  United States
+                  {formData.country}
                 </p>
               </div>
 
@@ -37,7 +98,7 @@ export default function UserAddressCard() {
                   City/State
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  Phoenix, Arizona, United States.
+                  {formData.cityState}
                 </p>
               </div>
 
@@ -46,7 +107,7 @@ export default function UserAddressCard() {
                   Postal Code
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  ERT 2489
+                  {formData.postalCode}
                 </p>
               </div>
 
@@ -55,7 +116,7 @@ export default function UserAddressCard() {
                   TAX ID
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  AS4568384
+                  {formData.taxId}
                 </p>
               </div>
             </div>
@@ -93,37 +154,63 @@ export default function UserAddressCard() {
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
               Update your details to keep your profile up-to-date.
             </p>
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                {success}
+              </div>
+            )}
           </div>
           <form className="flex flex-col">
             <div className="px-2 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                 <div>
                   <Label>Country</Label>
-                  <Input type="text" defaultValue="United States" />
+                  <Input
+                    type="text"
+                    value={formData.country}
+                    onChange={(e) => handleInputChange("country", e.target.value)}
+                  />
                 </div>
 
                 <div>
                   <Label>City/State</Label>
-                  <Input type="text" defaultValue="Arizona, United States." />
+                  <Input
+                    type="text"
+                    value={formData.cityState}
+                    onChange={(e) => handleInputChange("cityState", e.target.value)}
+                  />
                 </div>
 
                 <div>
                   <Label>Postal Code</Label>
-                  <Input type="text" defaultValue="ERT 2489" />
+                  <Input
+                    type="text"
+                    value={formData.postalCode}
+                    onChange={(e) => handleInputChange("postalCode", e.target.value)}
+                  />
                 </div>
 
                 <div>
                   <Label>TAX ID</Label>
-                  <Input type="text" defaultValue="AS4568384" />
+                  <Input
+                    type="text"
+                    value={formData.taxId}
+                    onChange={(e) => handleInputChange("taxId", e.target.value)}
+                  />
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-              <Button size="sm" variant="outline" onClick={closeModal}>
+              <Button size="sm" variant="outline" onClick={closeModal} disabled={isLoading}>
                 Close
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
+              <Button size="sm" onClick={handleSave} disabled={isLoading}>
+                {isLoading ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>

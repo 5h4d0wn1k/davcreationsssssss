@@ -106,4 +106,6 @@ export {
   HorizontaLDots,
   ChevronUpIcon,
   ChatIcon,
+  TrashBinIcon as DeleteIcon,
+  HorizontaLDots as SearchIcon,
 };

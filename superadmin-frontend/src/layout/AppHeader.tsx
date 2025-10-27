@@ -13,7 +13,7 @@ const AppHeader: React.FC = () => {
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
   const handleToggle = () => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+    if (window.innerWidth >= 1024) {
       toggleSidebar();
     } else {
       toggleMobileSidebar();
@@ -88,14 +88,14 @@ const AppHeader: React.FC = () => {
               width={154}
               height={32}
               className="dark:hidden"
-              src="/images/logo/Banner logo.jpg"
+              src="/images/logo/square-logo.jpg"
               alt="Logo"
             />
             <Image
               width={154}
               height={32}
               className="hidden dark:block"
-              src="/images/logo/Banner logo.jpg"
+              src="/images/logo/square-logo.jpg"
               alt="Logo"
             />
           </Link>
