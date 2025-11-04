@@ -1,0 +1,32 @@
+{
+  "name": "DavCreationSuperAdmin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "node --watch --env-file=.env app.js",
+    "start": "node app.js",
+    "build": "npx prisma generate && echo 'Build completed successfully'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "mime-types": "^3.0.1",
+    "pg": "^8.11.0",
+    "resend": "^6.1.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.2",
+    "eslint": "^9.37.0",
+    "prisma": "^5.0.0"
+  }
+}

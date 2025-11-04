@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserType {
+  user_type_id      Int      @id @default(autoincrement())
+  user_type_name    String   @db.VarChar(100) @default("user")
+  user_type_value   Int       @default(99)
+  created_by        Int
+  created_date      DateTime @default(now())
+  last_updated_date DateTime @updatedAt
+  is_active          Boolean  @default(true)
+  Users             Users[]
+}
+
+model Users {
+  user_id           Int      @id @default(autoincrement())
+  first_name        String   @db.VarChar(100)
+  last_name         String   @db.VarChar(100)
+  user_type_id      Int
+  address           String?
+  email             String   @unique @db.VarChar(150)
+  phone             String?  @db.VarChar(20)
+  user_password     String   @db.VarChar(255)
+  created_by        Int
+  created_date      DateTime @default(now())
+  last_updated_date DateTime @updatedAt
+  is_active         Boolean  @default(true)
+
+  // Relations
+  userType   UserType     @relation(fields: [user_type_id], references: [user_type_id])
+  userAccess UserAccess[]
+  modules    Modules[]
+  sessions   Session[]
+}
+
+model Modules {
+  module_id         Int          @id @default(autoincrement())
+  module_name       String       @db.VarChar(150)
+  parent_id         Int          @default(0)
+  tool_tip          String       @db.VarChar(255)
+  short_description String
+  url_slug          String       @unique @db.VarChar(255)
+  created_by        Int
+  created_date      DateTime     @default(now())
+  last_updated_date DateTime     @updatedAt
+  is_active         Boolean      @default(true)
+  users             Users        @relation(fields: [created_by], references: [user_id])
+  UserAccess        UserAccess[]
+}
+
+model UserAccess {
+  user_access_id    Int      @id @default(autoincrement())
+  module_id         Int
+  user_id           Int
+  created_by        Int
+  created_date      DateTime @default(now())
+  last_updated_date DateTime @updatedAt
+  is_active         Boolean  @default(true)
+
+  users   Users   @relation(fields: [created_by], references: [user_id])
+  modules Modules @relation(fields: [module_id], references: [module_id])
+}
+
+model OTP {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  otp          String
+  expiry       DateTime @default(dbgenerated("now() + interval '5 minutes'"))
+  created_date DateTime @default(now()) @db.Timestamp(6)
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  expiry       Int      @default(dbgenerated("extract(epoch from (now() + interval '1 hour'))::int"))
+  created_date DateTime @default(now()) @db.Timestamp(6)
+
+  // Relations
+  users Users? @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
