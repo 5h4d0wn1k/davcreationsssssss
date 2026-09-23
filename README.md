@@ -89,4 +89,5 @@ validation middleware central — do not bypass them per route.
 
 ## License
 
-License not yet specified — contact the maintainer before reusing the codebase.
+Proprietary - see LICENSE
+
